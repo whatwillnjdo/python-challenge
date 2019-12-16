@@ -1,7 +1,18 @@
 import os
 import csv
 
-csvpath = os.path.join('...', '/Users/nj/PythonData/python-challenge/PyBank/Resources', 'PyBank_data.csv')
+dirname = os.path.dirname(__file__)
+csvpath = os.path.join(dirname, 'PyBank_data.csv')
+outputpath = os.path.join(dirname, 'PyBank_Output.txt')
+
+totalAmount = 0
+currentAmountChange = 0
+nextAmount = 0
+previousAmountChange = 0
+greatestMonth = ''
+lowestAmountChange = 0
+lowestMonth = ''
+output = ''
 
 with open(csvpath, 'r') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
@@ -9,14 +20,6 @@ with open(csvpath, 'r') as csvfile:
     csvheader = next(csvreader)
 
     csvdata = list(csvreader)
-
-    totalAmount = 0
-    currentAmountChange = 0
-    nextAmount = 0
-    previousAmountChange = 0
-    greatestMonth = ''
-    lowestAmountChange = 0
-    lowestMonth = ''
 
     for row in csvdata:
         totalAmount = totalAmount + int(row[1])
@@ -35,8 +38,17 @@ with open(csvpath, 'r') as csvfile:
     totalMonths = len(csvdata)
     averageChange = round(totalAmount/totalMonths, 2)
 
-print(f'Total Months: {totalMonths}')
-print(f'Total: ${totalAmount}')
-print(f'Average  Change: ${averageChange}')
-print(f'Greatest Increase in Profits: {greatestMonth} (${previousAmountChange})')
-print(f'Greatest Decrease in Profits: {lowestMonth} (${int(lowestAmountChange)})')
+output = (
+        'Financial Analysis\n'
+        '----------------------------\n'
+        f'Total Months: {totalMonths}\n'
+        f'Total: ${totalAmount}\n'
+        f'Average  Change: ${averageChange}\n'
+        f'Greatest Increase in Profits: {greatestMonth} (${previousAmountChange})\n'
+        f'Greatest Decrease in Profits: {lowestMonth} (${int(lowestAmountChange)})\n'
+        )
+
+print(output)
+
+with open(outputpath, 'w', newline='') as outputfile:
+    outputfilewriter = outputfile.write(output)
