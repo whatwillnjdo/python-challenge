@@ -6,9 +6,11 @@ csvpath = os.path.join(dirname, 'PyBank_data.csv')
 outputpath = os.path.join(dirname, 'PyBank_Output.txt')
 
 totalAmount = 0
+totalMonths = 0
 currentAmountChange = 0
 nextAmount = 0
 previousAmountChange = 0
+changeAmount = 0
 greatestMonth = ''
 lowestAmountChange = 0
 lowestMonth = ''
@@ -27,6 +29,11 @@ with open(csvpath, 'r') as csvfile:
         nextAmount = int(row[1])
         currentMonth = row[0]
 
+        if(currentAmountChange == nextAmount):
+            changeAmount = 0
+        else:
+            changeAmount = changeAmount + currentAmountChange
+
         if previousAmountChange < currentAmountChange:
             previousAmountChange = currentAmountChange
             greatestMonth = currentMonth
@@ -36,11 +43,11 @@ with open(csvpath, 'r') as csvfile:
             lowestMonth = currentMonth
 
     totalMonths = len(csvdata)
-    averageChange = round(totalAmount/totalMonths, 2)
+    averageChange = round(changeAmount/(totalMonths-1), 2)
 
 output = (
-        'Financial Analysis\n'
-        '----------------------------\n'
+         'Financial Analysis\n'
+         '----------------------------\n'
         f'Total Months: {totalMonths}\n'
         f'Total: ${totalAmount}\n'
         f'Average  Change: ${averageChange}\n'
