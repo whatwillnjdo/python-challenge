@@ -4,6 +4,32 @@ import csv
 def getUnique(inputList):
     return list(set(inputList))
 
+def resetValue(value1):
+    value1 = 0
+    return (value1)
+
+def outputFileBuilder(value1, inputDictonary):
+    outputString = (
+            'Election Results\n'
+            '-------------------------\n'
+            f'Total Votes: {value1}\n'
+            '-------------------------\n'
+            )
+    l = {int(k):v for k,v in inputDictonary.items()}
+    rl = list(l.items())
+    rl.sort(reverse=True)
+    winner = f'{rl[0]}'
+    startPosition = winner.find(',') + 3
+    endPosition = winner.find(':')
+    winnerName = winner[startPosition:endPosition]
+    for listValue in rl:
+         outputString+=(f'{listValue[1]}\n')
+    outputString+=('-------------------------\n'
+                    f'Winner: {winnerName}\n'
+                  '-------------------------'
+                  )
+    return outputString
+
 dirname = os.path.dirname(__file__)
 csvpath = os.path.join(dirname, 'PyPoll_data.csv')
 outputpath = os.path.join(dirname, 'PyPoll_Output.txt')
@@ -11,12 +37,7 @@ outputpath = os.path.join(dirname, 'PyPoll_Output.txt')
 totalVotes = 0
 candidateCount = 0
 maxCount = 0
-winnerName = ''
-
-output = (
-        'Election Results\n'
-        '-------------------------\n'
-        )
+resultList = {}
 
 with open(csvpath, 'r') as csvfile:
     csvreader = csv.reader(csvfile, delimiter=',')
@@ -26,10 +47,6 @@ with open(csvpath, 'r') as csvfile:
     csvdata = list(csvreader)
 
     totalVotes = len(csvdata)
-    output+=(
-             f'Total Votes: {totalVotes}\n'
-             '-------------------------\n'
-             )
 
     candidateList = getUnique(list(zip(*csvdata))[2])
 
@@ -38,17 +55,11 @@ with open(csvpath, 'r') as csvfile:
             if row[2] == candidate:
                 candidateCount = candidateCount + 1
         candidatePercent = round((candidateCount/totalVotes)*100, 3)
-        output+=f"{candidate}: {candidatePercent}% ({candidateCount})\n"
-        if maxCount < candidateCount:
-            maxCount = candidateCount
-            winnerName = candidate
-        candidateCount = 0
-        candidatePercent = 0
+        resultList[f"{candidateCount}"] =f"{candidate}: {candidatePercent}% ({candidateCount})"
+        candidateCount = resetValue(candidateCount)
+        candidatePercent = resetValue(candidatePercent)
 
-output+=('-------------------------\n'
-         f'Winner: {winnerName}\n'
-         '-------------------------'
-         )
+output = outputFileBuilder(totalVotes, resultList)
 
 print(output)
 
